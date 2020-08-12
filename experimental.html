@@ -39,24 +39,538 @@
 					<section id="main" class="wrapper">
 						<div class="inner">
 							<h1 class="major">Experimental</h1>
-							<p>This game was created.</p>
-							<p>More created text.</p>
-							
+							<p>I have always been fascinated by shaders since I discovered them. Seeing something like the great amount of detail that can be rendered with the addition of something as simple as a normal map
+							is what sparked this fascination. The more I have learnt about shaders the more fascinated I have been with them. It's not the great details alone that interest me. With shaders I am able to
+							greatly enhance the visual potential of my games, like with the outline shader used in my rocket delivery game. I have also been interested in creating art through shaders. You can find some of
+							the resources I have used in my shader development journey below, as well as some cool looking shaders.</p>
+							<p></p>
+							<p><a href="https://thebookofshaders.com/" style="font-weight: bold">The Book of Shaders</a></p>
+							<p><a href="https://www.iquilezles.org/" style="font-weight: bold">Inigo Quiles</a></p>
+							<p><a href="https://www.youtube.com/channel/UCcAlTqd9zID6aNX3TzwxJXg" style="font-weight: bold">The Art of Code on Youtube</a></p>
 							<div class="row gtr-uniform">
 								<div class="col-4">
-								<span class="image fit"><img src="https://img.itch.zone/aW1hZ2UvNjU2MTkwLzM1MjY2MzYuZ2lm/347x500/193VxV.gif"></span>
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Palm Tree
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+void main() {
+    vec2 p = gl_FragCoord.xy / u_resolution.xy;
+    float t = u_time; // for some reason this line is needed
+    vec2 q = p - vec2(0.300,0.600);
+	
+    vec3 col = mix(vec3(0.730,0.252,0.401), vec3(0.6, 0.8, 1.0), p.y);
+	
+    float r = 0.2 + 0.1*cos(atan(q.y, q.x) * 10.0 + 20.0 * q.x + 1.0);
+    col *= smoothstep(r, r + 0.001, length(q));
+	
+    r = 0.015;
+    r += 0.002*cos(120.0*q.y);
+    r += exp(-70.0 * p.y);
+    col *=  1.0 - (smoothstep( r, r - 0.001, (abs(q.x-0.2*sin(2.5*q.y)))))*(smoothstep( 0.00, - 0.01, q.y));
+    
+	gl_FragColor = vec4(col, 1.0);
+}
+	" width="360" height="360"></canvas>
 								</div>
 								<div class="col-4">
-								<span class="image fit"><img src="https://img.itch.zone/aW1hZ2UvNjU2MTkwLzM1MjY2MzYuZ2lm/347x500/193VxV.gif"></span>
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Sun Rise
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+float plot(vec2 st, float pct){
+  return  smoothstep( pct-0.02, pct, st.y) -
+          smoothstep( pct, pct+0.02, st.y);
+}
+
+void main() {
+    vec2 p = gl_FragCoord.xy / u_resolution.xy;
+    vec2 sq = vec2(0.500,0.000 + sin(u_time / 2.0) / 6.0);
+    
+    vec3 color = mix (vec3(0.441,0.574,1.000), vec3(1.000,0.520,0.216), sin(u_time / 2.0) - p.y + sin(p.x * PI * 2. - u_time * 2.0) / 30.0);
+    color = mix(color, vec3(0.988,1.000,0.857), 1.0 - smoothstep(0.1, 0.11, length(p - sq)));
+    color = mix(color, vec3(0.250,0.336,1.000), 1.0 - smoothstep(0.2, 0.21, p.y + sin(p.x * PI * 5. + u_time * 2.0) / 200.));
+    
+    
+    gl_FragColor = vec4(color,1.0);
+}
+	" width="360" height="360"></canvas>
 								</div>
 								<div class="col-4">
-								<span class="image fit"><img src="https://img.itch.zone/aW1hZ2UvNjU2MTkwLzM1MjY2MzYuZ2lm/347x500/193VxV.gif"></span>
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Rainbow
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+float plot(vec2 st, float pct){
+  return  smoothstep( pct-0.02, pct, st.y) -
+          smoothstep( pct, pct+0.02, st.y);
+}
+
+void main() {
+    vec2 p = gl_FragCoord.xy / u_resolution.xy;
+	
+    float y = pow(cos((p.x * 2.0 - 1.0 + u_time) * PI / 2.0) / 2.0, 1.0) / 2.0 + 0.7;
+    
+    vec3 color = vec3(0.216,0.507,1.000);
+    color = vec3(step(y - 0.3, p.y), 0.0, 0.0) - vec3(step(y - 0.25, p.y), 0.0, 0.0);
+    color += vec3(0.0, step(y - 0.25, p.y), 0.0) - vec3(0.0, step(y - 0.2, p.y), 0.0);
+    color += vec3(0.0, 0.0, step(y - 0.2, p.y)) - vec3(0.0, 0.0, step(y - 0.15, p.y));
+    
+    gl_FragColor = vec4(color,1.0);
+}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Colour wheel
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define TWO_PI 6.28318530718
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+//  Function from Iñigo Quiles
+//  https://www.shadertoy.com/view/MsS3Wc
+vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+}
+
+void main(){
+    vec2 st = gl_FragCoord.xy/u_resolution;
+    vec3 color = vec3(0.0);
+
+    // Use polar coordinates instead of cartesian
+    vec2 toCenter = st - vec2(0.5);
+    float angle = atan(toCenter.y,toCenter.x);
+    float radius = length(toCenter)*2.0;
+
+    // Map the angle (-PI to PI) to the Hue (from 0 to 1)
+    // and the Saturation to the radius
+    color = mix(hsb2rgb(vec3((angle/TWO_PI + u_time / 2.0)+0.5,radius * 2.0,1.0)), vec3(0.0),step(0.5, radius));
+
+    gl_FragColor = vec4(color,1.0);
+}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Rectangles
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+float rect(vec2 bottomLeft, vec2 topRight, vec2 st)
+{
+    float bottom = step(bottomLeft.y, st.y);
+    float left = step(bottomLeft.x, st.x);
+    float top = 1.0 - step(topRight.y, st.y);
+    float right = 1.0 - step(topRight.x, st.x);
+	return bottom * left * top * right;    
+}
+
+void main(){
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    float t = u_time; // for some reason this line is needed
+    vec3 color = vec3(0.0);
+
+    color += vec3(1.0, 0.0, 0.0) * rect(vec2(0.1, 0.2), vec2(0.410,0.300), st);
+    color += vec3(1.0, 0.0, 0.0) * rect(vec2(0.410,0.430), vec2(0.610,0.580), st);
+    color += vec3(0.611,1.000,0.688) * rect(vec2(0.610,0.640), vec2(0.870,0.910), st);
+	
+    gl_FragColor = vec4(color,1.0);
+}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Tic tac toe
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+mat2 rotate2d(float _angle){
+    return mat2(cos(_angle),-sin(_angle),
+                sin(_angle),cos(_angle));
+}
+
+float box(in vec2 _st, in vec2 _size){
+    _size = vec2(0.5) - _size*0.5;
+    vec2 uv = smoothstep(_size,
+                        _size+vec2(0.001),
+                        _st);
+    uv *= smoothstep(_size,
+                    _size+vec2(0.001),
+                    vec2(1.0)-_st);
+    return uv.x*uv.y;
+}
+
+float cross(in vec2 _st, float _size){
+    return  box(_st, vec2(_size,_size/4.)) +
+            box(_st, vec2(_size/4.,_size));
+}
+
+float circle(in vec2 _st, in float _radius){
+    vec2 l = _st-vec2(0.5);
+    return 1.-step(_radius, dot(l,l)*4.0);
+}
+
+void main() {
+	vec2 st = gl_FragCoord.xy/u_resolution;
+    vec3 color = vec3(0.0);
+
+    float gridScale = 10.;
+    st *= gridScale;
+	
+    float row = floor(gridScale - st.y);
+    float col = floor(st.x);
+    
+    st = fract(st); // Wrap arround 1.0
+
+    color = vec3(row / gridScale, col / gridScale, 0.0);
+    
+    if (mod(row + col, 2.0) == 0.0)
+    	color = vec3(circle(st,0.5));
+    else
+    {
+        st -= vec2(0.5);
+        // rotate the space
+        st = rotate2d( sin(u_time)*PI ) * st;
+        // move it back to the original place
+        st += vec2(0.5);
+        color = vec3(cross(st, 0.8));
+    }
+
+	gl_FragColor = vec4(color,1.0);
+}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Washroom floor tile
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+float box(vec2 st, vec2 size)
+{
+    size = vec2(0.5) - size*0.5;
+    return 	step(size.x, st.x) * (1.0 - step(1.0 - size.x, st.x)) * 
+        	step(size.y, st.y) * (1.0 - step(1.0 - size.y, st.y));
+}
+
+mat2 rotate2d(float _angle){
+    return mat2(cos(_angle),-sin(_angle),
+                sin(_angle),cos(_angle));
+}
+
+vec2 rotate(vec2 st, float angle)
+{
+    float a = cos(angle);
+    float b = sin(angle);
+    float x = a * st.x - b * st.y;
+    float y = b * st.x + a * st.y;
+    return vec2(x, y);
+}
+
+void main() {
+	vec2 st = gl_FragCoord.xy/u_resolution;
+    float t = u_time; // for some reason this line is needed
+    vec3 color = vec3(0.0);
+    
+    float gridScale = 10.0;
+    st *= gridScale;
+    st = fract(st);
+    
+    color = vec3(box(st, vec2(0.050,1.000))) - vec3(box(st, vec2(0.050,0.350)));
+    color += vec3(box(st, vec2(1.000, 0.050))) - vec3(box(st, vec2(0.350, 0.050)));
+    
+    st -= vec2(0.5);
+    //st *= rotate2d(45.0 * PI / 180.0);
+    st = rotate(st, 45.0 * PI / 180.0);
+    st += vec2(0.5);
+    color += vec3(box(st, vec2(0.300,0.300)));
+    color -= vec3(box(st, vec2(0.200,0.200)));
+    
+    color = 1.0 - color;
+
+	gl_FragColor = vec4(color,1.0);
+}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Row col alternate
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+float circle(vec2 st, float radius)
+{
+    vec2 d = vec2(.5) - st;
+    float l = dot(d, d);
+    return step(l, radius);
+}
+
+void main() {
+	vec2 st = gl_FragCoord.xy/u_resolution;
+    vec3 color = vec3(0.0);
+    
+    float gridScale = 20.0;
+    st *= gridScale;
+    
+    float row = step(1.0, mod(st.y, 2.0));
+    float col = step(1.0, mod(st.x, 2.0));
+    
+    float sTime = 1.0;
+    st.x += u_time * step(sTime, mod(u_time, sTime * 2.0)) * (row - 0.5) * 2.0;
+    st.y += u_time * step(sTime, mod(u_time + sTime, sTime * 2.0)) * (col - 0.5) * 2.0;
+    
+    st = fract(st);
+    
+    color = vec3(circle(st, 0.125));
+
+	gl_FragColor = vec4(color,1.0);
+}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Truchet
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265358979323846
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+vec2 rotate2D (vec2 _st, float _angle) {
+    _st -= 0.5;
+    _st = mat2(cos(_angle), -sin(_angle), sin(_angle), cos(_angle)) * _st;
+    _st += 0.5;
+    return _st;
+}
+
+vec2 tile (vec2 _st, float _zoom) {
+    _st *= _zoom;
+    return fract(_st);
+}
+
+vec2 rotateTilePattern(vec2 _st){
+    
+    _st *= 2.0;
+    
+    float index = step(1.0, mod(_st.x, 2.0));
+    index += 2.0 * step(1.0, mod(_st.y, 2.0));
+    index += u_time;
+    
+    _st = fract(_st);
+    _st = rotate2D(_st, PI * 0.5 * (index - 1.));
+        
+    return _st;
+}
+
+vec4 quarterCircle(vec2 _st, vec2 p)
+{
+    float d = length(_st - p);
+    return vec4(step(0.475, d) - step(0.525, d));
+}
+
+vec4 quarterCircles(vec2 _st)
+{
+    return quarterCircle(_st, vec2(1.0, 0)) + quarterCircle(_st, vec2(0.0,1.));
+}
+
+void main (void) {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    
+    float scale = 12.0;
+    st *= scale;
+    float index = floor(st.x);
+    index += floor(st.y) * scale;
+    st = rotate2D(st, PI * 0.5 * floor(fract(sin(index) * 100000.0) * 4.0));
+    st = fract(st);
+    
+    vec4 colour = quarterCircles(st);
+    gl_FragColor = 1.0 - colour;
+}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Hex pattern
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265358979323846
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+float hexDist(vec2 st)
+{
+    float c = dot(st, normalize(vec2(1,1.73)));
+    c = max(c, st.x); 
+    
+    return c;
+}
+
+vec4 hexCoord(vec2 st)
+{
+    vec2 r = vec2(1, 1.73);
+    vec2 h = r * 0.5;
+    vec2 a = mod(st, r) - h;
+    vec2 b = mod(st - h, r) - h;
+        
+    vec2 gv = dot(a, a) < dot(b, b) ? a : b;
+    
+    float x = atan(gv.x, gv.y);
+    float y = 0.5 - hexDist(abs(gv));
+    vec2 id = st-gv;
+    return vec4(x, y, id.x, id.y);
+}
+
+void main (void) {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    
+    st *= 15.0;
+
+    vec3 col = vec3(0.0);    
+    //col += sin(hexDist(st) * 10.0 + u_time);
+    //st = abs(st * 2.0 - 1.0);
+    //col = vec3(step(hexDist(st), 0.411));
+    
+    vec4 h = hexCoord(st);
+    h.zw -= 2.0;
+    
+    float c = smoothstep(0.09, 0.1, h.y*cos(h.z * h.w + u_time)*sin(h.z * h.w + u_time));
+    col += c;
+    gl_FragColor = vec4(col, 1.0);
+}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<canvas class="glslCanvas" data-fragment=
+	"
+// Simple 3d
+	#ifdef GL_ES
+	precision mediump float;
+	#endif
+
+	uniform vec2 u_resolution;
+	uniform vec2 u_mouse;
+	uniform float u_time;
+
+	float DistLine(vec3 ro, vec3 rd, vec3 p)
+	{
+		return length(cross(p - ro, rd)) / length(rd);
+	}
+
+	void main(){
+		vec2 uv = gl_FragCoord.xy/u_resolution.xy;
+		uv -= 0.5;
+		uv.x *= u_resolution.x/u_resolution.y;
+		
+		vec3 ro = vec3(0.0, 0.0, -2.0);
+		vec3 rd = vec3(uv.x, uv.y,0.0) - ro;
+		
+		vec3 p = vec3(sin(u_time) / 2.0, 0.0, cos(u_time) + 2.0);
+		float d = DistLine(ro, rd, p);
+		d = smoothstep(.1, .09, d);
+		gl_FragColor = vec4(d, d, d, 1.0);
+	}
+	" width="360" height="360"></canvas>
+								</div>
+								<div class="col-4">
+								<iframe width="360" height="360" frameborder="1" src="https://www.shadertoy.com/embed/wtjcWV?gui=true&t=10&paused=false&muted=true" allowfullscreen></iframe>
+								</div>
+								<div class="col-4">
+								<iframe width="360" height="360" frameborder="1" src="https://www.shadertoy.com/embed/tt2cDc?gui=true&t=10&paused=false&muted=true" allowfullscreen></iframe>
+								</div>
+								<div class="col-4">
+								<iframe width="360" height="360" frameborder="1" src="https://www.shadertoy.com/embed/ttffzH?gui=true&t=10&paused=false&muted=true" allowfullscreen></iframe>
+								</div>
+								<div class="col-4">
+								<iframe width="360" height="360" frameborder="1" src="https://www.shadertoy.com/embed/ttXBzN?gui=true&t=10&paused=false&muted=true" allowfullscreen></iframe>
+								</div>
+								<div class="col-4">
+								<iframe width="360" height="360" frameborder="1" src="https://www.shadertoy.com/embed/tlfBzN?gui=true&t=10&paused=false&muted=true" allowfullscreen></iframe>
+								</div>
+								<div class="col-4">
+								<iframe width="360" height="360" frameborder="1" src="https://www.shadertoy.com/embed/3lsBR4?gui=true&t=10&paused=false&muted=true" allowfullscreen></iframe>
+								</div>
+								<div class="col-4">
+								<iframe width="360" height="360" frameborder="1" src="https://www.shadertoy.com/embed/ttlBzN?gui=true&t=10&paused=false&muted=true" allowfullscreen></iframe>
+								</div>
+								<div class="col-12">
+								<p></p>
+								<a href="p5/woah/webgl.html">Click here to see a few WebGL creations</a>
 								</div>
 							</div>
 						</div>
 					</section>
-
-
 			</div>
 
 		<!-- Footer -->
@@ -69,6 +583,7 @@
 			</footer>
 
 		<!-- Scripts -->
+			<script src="https://rawgit.com/patriciogonzalezvivo/glslCanvas/master/dist/GlslCanvas.js"></script>
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/jquery.scrollex.min.js"></script>
 			<script src="assets/js/jquery.scrolly.min.js"></script>
